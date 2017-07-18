@@ -6,19 +6,64 @@ using System.Text;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Executes a series of <see cref="OpCode"/> instructions.
+    /// </summary>
     public class ExecutionEngine : IDisposable
     {
+        /// <summary>
+        /// Used to resolve scripts based on a script_hash.
+        /// </summary>
         private readonly IScriptTable table;
+
+        /// <summary>
+        /// Used to execute sys calls.
+        /// </summary>
         private readonly InteropService service;
 
+        /// <summary>
+        /// Holds the message needs to be verified.
+        /// </summary>
         public IScriptContainer ScriptContainer { get; }
+
+        /// <summary>
+        /// Uses this to calculate hashes and verifiy signatures.
+        /// </summary>
         public ICrypto Crypto { get; }
+
+        /// <summary>
+        /// Serves as the callstack for scripts.
+        /// </summary>
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
+
+        /// <summary>
+        /// Main stack used to evaluate expressions. 
+        /// </summary>
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
+
+        /// <summary>
+        /// Often used as a temporary stack to store values from <see cref="EvaluationStack"/>
+        /// </summary>
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
+
+        /// <summary>
+        /// Tracks the currently executing execution context
+        /// </summary>
         public ExecutionContext CurrentContext => InvocationStack.Peek();
+
+        /// <summary>
+        /// Tracks the execution context that called the currently executing context.
+        /// </summary>
         public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
+
+        /// <summary>
+        /// Tracks the first execution context that pushed onto the stack.
+        /// </summary>
         public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
+
+        /// <summary>
+        /// Returns that state of the virtual machine at any given time.
+        /// </summary>
         public VMState State { get; private set; } = VMState.BREAK;
 
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, InteropService service = null)
@@ -47,6 +92,11 @@ namespace Neo.VM
                 StepInto();
         }
 
+        /// <summary>
+        /// This is the main method of execution.
+        /// </summary>
+        /// <param name="opcode">Instruction to be executed</param>
+        /// <param name="context">Context in which to execute the instruction.</param>
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
             if (opcode > OpCode.PUSH16 && opcode != OpCode.RET && context.PushOnly)
@@ -750,11 +800,23 @@ namespace Neo.VM
             return CurrentContext.BreakPoints.Remove(position);
         }
 
+        /// <summary>
+        /// Executes the next opcode instruction.
+        /// </summary>
         public void StepInto()
         {
-            if (InvocationStack.Count == 0) State |= VMState.HALT;
-            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
+            if (InvocationStack.Count == 0)
+            {
+                State |= VMState.HALT;
+            }
+
+            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT))
+            {
+                return;
+            }
+
             OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
+
             try
             {
                 ExecuteOp(opcode, CurrentContext);
@@ -765,6 +827,10 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Executes the rest of the <see cref="OpCode"/>'s in the current <see cref="ExecutionContext"/>,
+        /// then returns to the calling context.
+        /// </summary>
         public void StepOut()
         {
             State &= ~VMState.BREAK;
@@ -773,6 +839,10 @@ namespace Neo.VM
                 StepInto();
         }
 
+        /// <summary>
+        /// If the <see cref="StepInto"/> method pushes a new script call onto the <see cref="InvocationStack"/>,
+        /// this method will run all opcodes in the new <see cref="ExecutionContext"/>
+        /// </summary>
         public void StepOver()
         {
             if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;

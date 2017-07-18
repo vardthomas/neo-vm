@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Contains helpers implemented as extension methods.
+    /// </summary>
     internal static class Helper
     {
         public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)

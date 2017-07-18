@@ -4,6 +4,15 @@ using System.IO;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Establishes a context for execution of scripts.
+    /// </summary>
+    /// <remarks>
+    /// Whenever a script is executed, a new instance <see cref="ExecutionContext"/> is pushed onto the stack.
+    /// Its main job is to track the current instruction pointer along w/ breakpoints.
+    /// If the <see cref="PushOnly"/> flag is set to true, any opcode other than push instructions will put <see cref="engine"/>
+    /// in a <see cref="VMState.FAULT"/> state.
+    /// </remarks>
     public class ExecutionContext : IDisposable
     {
         private ExecutionEngine engine;
@@ -12,6 +21,9 @@ namespace Neo.VM
         internal readonly BinaryReader OpReader;
         internal readonly HashSet<uint> BreakPoints;
 
+        /// <summary>
+        /// Keeps track of current IP
+        /// </summary>
         public int InstructionPointer
         {
             get
@@ -24,6 +36,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Get the next instruction to be executed
+        /// </summary>
         public OpCode NextInstruction => (OpCode)Script[OpReader.BaseStream.Position];
 
         private byte[] _script_hash = null;

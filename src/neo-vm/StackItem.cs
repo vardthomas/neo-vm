@@ -7,6 +7,15 @@ using Boolean = Neo.VM.Types.Boolean;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents an item that can be put onto a <see cref="RandomAccessStack{T}"/>.
+    /// <remarks>
+    /// This class serves as a base class for datastructures that should have the ability to be pushed/popped
+    /// onto a <see cref="RandomAccessStack{T}"/> It contains methods, such as <see cref="GetBigInteger"/>
+    /// and <see cref="GetBoolean" /> that attempt to map the <see cref="StackItem"/> to "primitive" vm 
+    /// datatypes. It also contains implementations for casting from implicit types.
+    /// </remarks>
+    /// </summary>
     public abstract class StackItem : IEquatable<StackItem>
     {
         public virtual bool IsArray => false;

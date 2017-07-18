@@ -3,6 +3,13 @@ using System.Collections.Generic;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Used for processing <see cref="OpCode.SYSCALL"/> instructions.
+    /// </summary>
+    /// <remarks>
+    /// This class allows code executing within the <see cref="ExecutionEngine"/> to call services
+    /// outside of the VM.
+    /// </remarks>
     public class InteropService
     {
         private Dictionary<string, Func<ExecutionEngine, bool>> dictionary = new Dictionary<string, Func<ExecutionEngine, bool>>();

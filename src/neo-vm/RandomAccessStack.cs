@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Serves as a FIFO stack that can also be indexed into.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class RandomAccessStack<T> : IReadOnlyCollection<T>
     {
         private readonly List<T> list = new List<T>();

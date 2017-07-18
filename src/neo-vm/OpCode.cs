@@ -1,5 +1,8 @@
 ﻿namespace Neo.VM
 {
+    /// <summary>
+    /// Defines all of the opcodes available within the <see cref="ExecutionEngine"/>
+    /// </summary>
     public enum OpCode : byte
     {
         // Constants
@@ -46,9 +49,9 @@
         DUPFROMALTSTACK = 0x6A,
         TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
         FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.
-        XDROP = 0x6D,
-        XSWAP = 0x72,
-        XTUCK = 0x73,
+        XDROP = 0x6D, // Pops the top itam as an integer 'a', removes the 'a'th instruction
+        XSWAP = 0x72, // Pops top item as an integer 'a', swaps the instruction at position 'a' with the top item
+        XTUCK = 0x73, // Pops top item as an integer 'a', inserts next instruction into stack at position a 
         DEPTH = 0x74, // Puts the number of stack items onto the stack.
         DROP = 0x75, // Removes the top stack item.
         DUP = 0x76, // Duplicates the top stack item.
@@ -83,7 +86,7 @@
         // Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
         INC = 0x8B, // 1 is added to the input.
         DEC = 0x8C, // 1 is subtracted from the input.
-        SIGN = 0x8D,
+        SIGN = 0x8D, // Pops the stack and pushes the sign of the result
         NEGATE = 0x8F, // The sign of the input is flipped.
         ABS = 0x90, // The input is made positive.
         NOT = 0x91, // If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
@@ -111,17 +114,17 @@
         //RIPEMD160 = 0xA6, // The input is hashed using RIPEMD-160.
         SHA1 = 0xA7, // The input is hashed using SHA-1.
         SHA256 = 0xA8, // The input is hashed using SHA-256.
-        HASH160 = 0xA9,
-        HASH256 = 0xAA,
-        CHECKSIG = 0xAC,
-        CHECKMULTISIG = 0xAE,
+        HASH160 = 0xA9, // The input is hashed with SHA-256 then RIPEMD160;
+        HASH256 = 0xAA,  // The input is hashed with SHA-256 two times.
+        CHECKSIG = 0xAC, // Verify message authenticity based on a public key and signature
+        CHECKMULTISIG = 0xAE, // Verify message authenticity based on multiple public keys and signatures
 
 
         // Array
-        ARRAYSIZE = 0xC0,
-        PACK = 0xC1,
-        UNPACK = 0xC2,
-        PICKITEM = 0xC3,
+        ARRAYSIZE = 0xC0, // Pops an array off of the stack and pushes its length
+        PACK = 0xC1, // Pops an integer 'a' off of the stack, then packs the next 'a' items on the stack into an array of stackitems, then pushes the new array onto the stack
+        UNPACK = 0xC2, // Pops an array of stackitems, then pushes each item onto the stack
+        PICKITEM = 0xC3, // Pops an integer 'a', then pops an array of stackitems, then pushes the item at index 'a' in the array onto the stack
         SETITEM = 0xC4,
         NEWARRAY = 0xC5, //用作引用類型
         NEWSTRUCT = 0xC6, //用作值類型

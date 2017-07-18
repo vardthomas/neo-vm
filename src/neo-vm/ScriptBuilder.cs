@@ -5,10 +5,20 @@ using System.Text;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Builds a byte representation of a script.
+    /// <remarks>
+    /// This class is heavily used in the Neo GUI wallet. It is used to process <see cref="OpCode"/>'s
+    /// and emit a corresponding byte array. Internally, the opcodes are stored in the <see cref="ms"/> field.
+    /// </remarks>
+    /// </summary>
     public class ScriptBuilder : IDisposable
     {
         private MemoryStream ms = new MemoryStream();
 
+        /// <summary>
+        /// Gets the current offset for the memory stream.
+        /// </summary>
         public int Offset => (int)ms.Position;
 
         public void Dispose()
@@ -16,6 +26,12 @@ namespace Neo.VM
             ms.Dispose();
         }
 
+        /// <summary>
+        /// Writes the byte representation of the OpCode into the <see cref="ms"/> field.
+        /// If the <see cref="arg"/> property is not null, it will write it immedatiately after the opcode.
+        /// </summary>
+        /// <param name="op">The OpCode to emit.</param>
+        /// <param name="arg">Optional byte array that can be used to pass in arguments along with the OpCode.</param>
         public ScriptBuilder Emit(OpCode op, byte[] arg = null)
         {
             ms.WriteByte((byte)op);
@@ -24,6 +40,12 @@ namespace Neo.VM
             return this;
         }
 
+        /// <summary>
+        /// Emits a call to a script.
+        /// </summary>
+        /// <param name="scriptHash"></param>
+        /// <param name="useTailCall"></param>
+        /// <returns></returns>
         public ScriptBuilder EmitAppCall(byte[] scriptHash, bool useTailCall = false)
         {
             if (scriptHash.Length != 20)
@@ -31,6 +53,12 @@ namespace Neo.VM
             return Emit(useTailCall ? OpCode.TAILCALL : OpCode.APPCALL, scriptHash);
         }
 
+        /// <summary>
+        /// Emits a jump to a new offset.
+        /// </summary>
+        /// <param name="op"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public ScriptBuilder EmitJump(OpCode op, short offset)
         {
             if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
@@ -38,6 +66,11 @@ namespace Neo.VM
             return Emit(op, BitConverter.GetBytes(offset));
         }
 
+        /// <summary>
+        /// Emits push operation with a correspending <see cref="BigInteger"/>
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
         public ScriptBuilder EmitPush(BigInteger number)
         {
             if (number == -1) return Emit(OpCode.PUSHM1);
@@ -46,11 +79,21 @@ namespace Neo.VM
             return EmitPush(number.ToByteArray());
         }
 
+        /// <summary>
+        /// If data is true, emits 1, else emits 0
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public ScriptBuilder EmitPush(bool data)
         {
             return Emit(data ? OpCode.PUSHT : OpCode.PUSHF);
         }
 
+        /// <summary>
+        /// First emits the length of <see cref="data"/>, then pushes its contents onto the stack
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public ScriptBuilder EmitPush(byte[] data)
         {
             if (data == null)
@@ -81,6 +124,11 @@ namespace Neo.VM
             return this;
         }
 
+        /// <summary>
+        /// Emits a system call.
+        /// </summary>
+        /// <param name="api"></param>
+        /// <returns></returns>
         public ScriptBuilder EmitSysCall(string api)
         {
             if (api == null)
@@ -94,6 +142,12 @@ namespace Neo.VM
             return Emit(OpCode.SYSCALL, arg);
         }
 
+
+
+        /// <summary>
+        /// Returns byte representation of the current program
+        /// </summary>
+        /// <returns></returns>
         public byte[] ToArray()
         {
             return ms.ToArray();
