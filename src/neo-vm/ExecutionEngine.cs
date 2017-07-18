@@ -22,7 +22,7 @@ namespace Neo.VM
         private readonly InteropService service;
 
         /// <summary>
-        /// Holds the message needs to be verified.
+        /// Holds the message that needs to be verified.
         /// </summary>
         public IScriptContainer ScriptContainer { get; }
 
@@ -93,7 +93,8 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// This is the main method of execution.
+        /// This is the main method of execution. It executes a single <see cref="Opcode"/>
+        /// within the context of <see cref="context"/>
         /// </summary>
         /// <param name="opcode">Instruction to be executed</param>
         /// <param name="context">Context in which to execute the instruction.</param>

@@ -8,7 +8,7 @@ namespace Neo.VM
     /// Establishes a context for execution of scripts.
     /// </summary>
     /// <remarks>
-    /// Whenever a script is executed, a new instance <see cref="ExecutionContext"/> is pushed onto the stack.
+    /// Whenever a new script is executed, a new instance <see cref="ExecutionContext"/> is pushed onto the stack.
     /// Its main job is to track the current instruction pointer along w/ breakpoints.
     /// If the <see cref="PushOnly"/> flag is set to true, any opcode other than push instructions will put <see cref="engine"/>
     /// in a <see cref="VMState.FAULT"/> state.
