@@ -1,7 +1,15 @@
 ﻿namespace Neo.VM
 {
     /// <summary>
-    /// Defines all of the opcodes available within the <see cref="ExecutionEngine"/>
+    ///   <en>
+    ///     Defines all of the opcodes available within the <see cref="ExecutionEngine"/>
+    ///   </en>
+    ///   <zh-CN>
+    ///     定义所有可用的操作码<see cref="ExecutionEngine"/>
+    ///   </zh-CN>
+    ///   <es>
+    ///     Define todos los opcodes disponibles en el <see cref="ExecutionEngine"/>
+    ///   </es>
     /// </summary>
     public enum OpCode : byte
     {

@@ -4,7 +4,15 @@ using System.Collections.Generic;
 namespace Neo.VM
 {
     /// <summary>
-    /// Used for processing <see cref="OpCode.SYSCALL"/> instructions.
+    ///   <en>
+    ///     Used for processing <see cref="OpCode.SYSCALL"/> instructions.
+    ///   </en>
+    ///   <zh-CN>
+    ///     用于加工<see cref="OpCode.SYSCALL"/>说明。
+    ///   </zh-CN>
+    ///   <es>
+    ///     Se utiliza para procesar <see cref="OpCode.SYSCALL"/> instrucciones.
+    ///   </es>
     /// </summary>
     /// <remarks>
     /// This class allows code executing within the <see cref="ExecutionEngine"/> to call services

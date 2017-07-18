@@ -8,13 +8,15 @@ using Boolean = Neo.VM.Types.Boolean;
 namespace Neo.VM
 {
     /// <summary>
-    /// Represents an item that can be put onto a <see cref="RandomAccessStack{T}"/>.
-    /// <remarks>
-    /// This class serves as a base class for datastructures that should have the ability to be pushed/popped
-    /// onto a <see cref="RandomAccessStack{T}"/> It contains methods, such as <see cref="GetBigInteger"/>
-    /// and <see cref="GetBoolean" /> that attempt to map the <see cref="StackItem"/> to "primitive" vm 
-    /// datatypes. It also contains implementations for casting from implicit types.
-    /// </remarks>
+    ///   <en>
+    ///     Represents an item that can be put onto a <see cref="RandomAccessStack{T}"/>. <remarks> This class serves as a base class for datastructures that should have the ability to be pushed/popped onto a <see cref="RandomAccessStack{T}"/> It contains methods, such as <see cref="GetBigInteger"/> and <see cref="GetBoolean" /> that attempt to map the <see cref="StackItem"/> to "primitive" vm datatypes. It also contains implementations for casting from implicit types. </remarks>
+    ///   </en>
+    ///   <zh-CN>
+    ///     表示可以放在一个的项目<see cref="RandomAccessStack{T}"/> 。 <remarks>该类作为数据结构的基类，应该能够被推/弹出来<see cref="RandomAccessStack{T}"/>它包含方法，如<see cref="GetBigInteger"/>和<see cref="GetBoolean" />试图映射<see cref="StackItem"/>到“原始”vm数据类型。它还包含从隐式类型转换的实现。 </remarks>
+    ///   </zh-CN>
+    ///   <es>
+    ///     Representa un elemento que se puede colocar en un <see cref="RandomAccessStack{T}"/> . <remarks> Esta clase sirve como una clase base para las estructuras de datos que deben tener la capacidad de ser empujados / <see cref="RandomAccessStack{T}"/> Contiene métodos, como <see cref="GetBigInteger"/> y <see cref="GetBoolean" /> Que intentan mapear el <see cref="StackItem"/> A &quot;primitivo&quot; vm tipos de datos. También contiene implementaciones para la conversión de tipos implícitos. </remarks>
+    ///   </es>
     /// </summary>
     public abstract class StackItem : IEquatable<StackItem>
     {

@@ -5,7 +5,15 @@ using System.Text;
 namespace Neo.VM
 {
     /// <summary>
-    /// Contains helpers implemented as extension methods.
+    ///   <en>
+    ///     Contains helpers implemented as extension methods.
+    ///   </en>
+    ///   <zh-CN>
+    ///     包含作为扩展方法实现的助手。
+    ///   </zh-CN>
+    ///   <es>
+    ///     Contiene ayudantes implementados como métodos de extensión.
+    ///   </es>
     /// </summary>
     internal static class Helper
     {

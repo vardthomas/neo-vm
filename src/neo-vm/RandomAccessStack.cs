@@ -5,7 +5,15 @@ using System.Collections.Generic;
 namespace Neo.VM
 {
     /// <summary>
-    /// Serves as a FIFO stack that can also be indexed into.
+    ///   <en>
+    ///     Serves as a FIFO stack that can also be indexed into.
+    ///   </en>
+    ///   <zh-CN>
+    ///     作为一个也可以编入索引的FIFO堆栈。
+    ///   </zh-CN>
+    ///   <es>
+    ///     Sirve como una pila FIFO que también se puede indexar en.
+    ///   </es>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class RandomAccessStack<T> : IReadOnlyCollection<T>

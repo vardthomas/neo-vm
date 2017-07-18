@@ -7,62 +7,158 @@ using System.Text;
 namespace Neo.VM
 {
     /// <summary>
-    /// Executes a series of <see cref="OpCode"/> instructions.
+    ///   <en>
+    ///     Executes a series of <see cref="OpCode"/> instructions.
+    ///   </en>
+    ///   <zh-CN>
+    ///     执行一系列<see cref="OpCode"/>说明。
+    ///   </zh-CN>
+    ///   <es>
+    ///     Ejecuta una serie de <see cref="OpCode"/> instrucciones.
+    ///   </es>
     /// </summary>
     public class ExecutionEngine : IDisposable
     {
         /// <summary>
-        /// Used to resolve scripts based on a script_hash.
+        ///   <en>
+        ///     Used to resolve scripts based on a script_hash.
+        ///   </en>
+        ///   <zh-CN>
+        ///     用于基于script_hash解析脚本。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Se utiliza para resolver scripts basados ​​en un script_hash.
+        ///   </es>
         /// </summary>
         private readonly IScriptTable table;
 
         /// <summary>
-        /// Used to execute sys calls.
+        ///   <en>
+        ///     Used to execute sys calls.
+        ///   </en>
+        ///   <zh-CN>
+        ///     用于执行sys调用。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Se utiliza para ejecutar llamadas de sistema.
+        ///   </es>
         /// </summary>
         private readonly InteropService service;
 
         /// <summary>
-        /// Holds the message that needs to be verified.
+        ///   <en>
+        ///     Holds the message that needs to be verified.
+        ///   </en>
+        ///   <zh-CN>
+        ///     持有需要验证的消息。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Contiene el mensaje que necesita ser verificado.
+        ///   </es>
         /// </summary>
         public IScriptContainer ScriptContainer { get; }
 
         /// <summary>
-        /// Uses this to calculate hashes and verifiy signatures.
+        ///   <en>
+        ///     Uses this to calculate hashes and verifiy signatures.
+        ///   </en>
+        ///   <zh-CN>
+        ///     使用它来计算散列和验证签名。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Utiliza esto para calcular hashes y firmas verifiy.
+        ///   </es>
         /// </summary>
         public ICrypto Crypto { get; }
 
         /// <summary>
-        /// Serves as the callstack for scripts.
+        ///   <en>
+        ///     Serves as the callstack for scripts.
+        ///   </en>
+        ///   <zh-CN>
+        ///     作为脚本的调用堆栈。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Sirve como la pila de llamadas para los scripts.
+        ///   </es>
         /// </summary>
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
 
         /// <summary>
-        /// Main stack used to evaluate expressions. 
+        ///   <en>
+        ///     Main stack used to evaluate expressions.
+        ///   </en>
+        ///   <zh-CN>
+        ///     主堆栈用于评估表达式。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Pila principal utilizada para evaluar expresiones.
+        ///   </es>
         /// </summary>
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
 
         /// <summary>
-        /// Often used as a temporary stack to store values from <see cref="EvaluationStack"/>
+        ///   <en>
+        ///     Often used as a temporary stack to store values from <see cref="EvaluationStack"/>
+        ///   </en>
+        ///   <zh-CN>
+        ///     经常用作临时堆栈来存储值<see cref="EvaluationStack"/>
+        ///   </zh-CN>
+        ///   <es>
+        ///     A menudo se utiliza como una pila temporal para almacenar valores de <see cref="EvaluationStack"/>
+        ///   </es>
         /// </summary>
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
 
         /// <summary>
-        /// Tracks the currently executing execution context
+        ///   <en>
+        ///     Tracks the currently executing execution context
+        ///   </en>
+        ///   <zh-CN>
+        ///     跟踪当前执行的执行上下文
+        ///   </zh-CN>
+        ///   <es>
+        ///     Rastrea el contexto de ejecución en ejecución
+        ///   </es>
         /// </summary>
         public ExecutionContext CurrentContext => InvocationStack.Peek();
 
         /// <summary>
-        /// Tracks the execution context that called the currently executing context.
+        ///   <en>
+        ///     Tracks the execution context that called the currently executing context.
+        ///   </en>
+        ///   <zh-CN>
+        ///     跟踪调用当前执行上下文的执行上下文。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Rastrea el contexto de ejecución que llamó al contexto actualmente en ejecución.
+        ///   </es>
         /// </summary>
         public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
 
         /// <summary>
-        /// Tracks the first execution context that pushed onto the stack.
+        ///   <en>
+        ///     Tracks the first execution context that pushed onto the stack.
+        ///   </en>
+        ///   <zh-CN>
+        ///     跟踪推送到堆栈的第一个执行上下文。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Rastrea el primer contexto de ejecución que se inserta en la pila.
+        ///   </es>
         /// </summary>
         public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
 
         /// <summary>
-        /// Returns that state of the virtual machine at any given time.
+        ///   <en>
+        ///     Returns that state of the virtual machine at any given time.
+        ///   </en>
+        ///   <zh-CN>
+        ///     在任何给定时间返回虚拟机的状态。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Devuelve el estado de la máquina virtual en un momento dado.
+        ///   </es>
         /// </summary>
         public VMState State { get; private set; } = VMState.BREAK;
 
@@ -93,8 +189,15 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// This is the main method of execution. It executes a single <see cref="Opcode"/>
-        /// within the context of <see cref="context"/>
+        ///   <en>
+        ///     This is the main method of execution. It executes a single <see cref="Opcode"/> within the context of <see cref="context"/>
+        ///   </en>
+        ///   <zh-CN>
+        ///     这是执行的主要方法。它执行一个<see cref="Opcode"/>在上下文中<see cref="context"/>
+        ///   </zh-CN>
+        ///   <es>
+        ///     Este es el principal método de ejecución. Ejecuta una sola <see cref="Opcode"/> Dentro del contexto de <see cref="context"/>
+        ///   </es>
         /// </summary>
         /// <param name="opcode">Instruction to be executed</param>
         /// <param name="context">Context in which to execute the instruction.</param>
@@ -802,7 +905,15 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Executes the next opcode instruction.
+        ///   <en>
+        ///     Executes the next opcode instruction.
+        ///   </en>
+        ///   <zh-CN>
+        ///     执行下一个操作码指令。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Ejecuta la siguiente instrucción opcode.
+        ///   </es>
         /// </summary>
         public void StepInto()
         {
@@ -829,8 +940,15 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Executes the rest of the <see cref="OpCode"/>'s in the current <see cref="ExecutionContext"/>,
-        /// then returns to the calling context.
+        ///   <en>
+        ///     Executes the rest of the <see cref="OpCode"/>'s in the current <see cref="ExecutionContext"/>, then returns to the calling context.
+        ///   </en>
+        ///   <zh-CN>
+        ///     执行其余的<see cref="OpCode"/>在目前<see cref="ExecutionContext"/> ，然后返回到调用上下文。
+        ///   </zh-CN>
+        ///   <es>
+        ///     Ejecuta el resto de la <see cref="OpCode"/> En la actualidad <see cref="ExecutionContext"/> , Y luego regresa al contexto de llamada.
+        ///   </es>
         /// </summary>
         public void StepOut()
         {
@@ -841,8 +959,15 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// If the <see cref="StepInto"/> method pushes a new script call onto the <see cref="InvocationStack"/>,
-        /// this method will run all opcodes in the new <see cref="ExecutionContext"/>
+        ///   <en>
+        ///     If the <see cref="StepInto"/> method pushes a new script call onto the <see cref="InvocationStack"/>, this method will run all opcodes in the new <see cref="ExecutionContext"/>
+        ///   </en>
+        ///   <zh-CN>
+        ///     如果<see cref="StepInto"/>方法将新的脚本调用推送到<see cref="InvocationStack"/> ，这个方法将运行新的所有操作码<see cref="ExecutionContext"/>
+        ///   </zh-CN>
+        ///   <es>
+        ///     Si el <see cref="StepInto"/> Método empuja una nueva llamada a la <see cref="InvocationStack"/> , Este método ejecutará todos los opcodes en el nuevo <see cref="ExecutionContext"/>
+        ///   </es>
         /// </summary>
         public void StepOver()
         {

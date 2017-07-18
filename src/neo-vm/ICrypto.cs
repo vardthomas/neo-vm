@@ -1,7 +1,15 @@
 ﻿namespace Neo.VM
 {
     /// <summary>
-    /// Performs basic hashing and message authentication.
+    ///   <en>
+    ///     Performs basic hashing and message authentication.
+    ///   </en>
+    ///   <zh-CN>
+    ///     执行基本散列和消息认证。
+    ///   </zh-CN>
+    ///   <es>
+    ///     Realiza el hash básico y la autenticación de mensajes.
+    ///   </es>
     /// </summary>
     public interface ICrypto
     {

@@ -5,7 +5,15 @@ using System.IO;
 namespace Neo.VM
 {
     /// <summary>
-    /// Establishes a context for execution of scripts.
+    ///   <en>
+    ///     Establishes a context for execution of scripts.
+    ///   </en>
+    ///   <zh-CN>
+    ///     建立执行脚本的上下文。
+    ///   </zh-CN>
+    ///   <es>
+    ///     Establece un contexto para la ejecución de scripts.
+    ///   </es>
     /// </summary>
     /// <remarks>
     /// Whenever a new script is executed, a new instance <see cref="ExecutionContext"/> is pushed onto the stack.
@@ -22,7 +30,15 @@ namespace Neo.VM
         internal readonly HashSet<uint> BreakPoints;
 
         /// <summary>
-        /// Keeps track of current IP
+        ///   <en>
+        ///     Keeps track of current IP
+        ///   </en>
+        ///   <zh-CN>
+        ///     跟踪当前的IP
+        ///   </zh-CN>
+        ///   <es>
+        ///     Mantiene un seguimiento de la IP actual
+        ///   </es>
         /// </summary>
         public int InstructionPointer
         {
@@ -37,7 +53,15 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Get the next instruction to be executed
+        ///   <en>
+        ///     Get the next instruction to be executed
+        ///   </en>
+        ///   <zh-CN>
+        ///     获取下一条要执行的指令
+        ///   </zh-CN>
+        ///   <es>
+        ///     Obtener la siguiente instrucción a ejecutar
+        ///   </es>
         /// </summary>
         public OpCode NextInstruction => (OpCode)Script[OpReader.BaseStream.Position];
 
